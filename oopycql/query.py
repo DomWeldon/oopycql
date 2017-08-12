@@ -1,7 +1,10 @@
 from abc import abstractproperty, ABCMeta
-import re
 import reprlib
 from six import add_metaclass
+
+import regex
+
+from .collections import ParameterSet
 
 
 class AbstractCypherQuery(ABCMeta):
@@ -10,7 +13,10 @@ class AbstractCypherQuery(ABCMeta):
     from CypherQuery
     """
 
-    PARAM_FINDING_REGEX = re.compile(r'')
+    PARAM_FINDING_REGEX = regex.compile((
+        '{ *([^\p{Sc}\p{S}][^\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{P}\p{M}]+) *}'
+        '|\$([^\p{Sc}\p{S}][^\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{P}\p{M}]+)'))
+    """Find a cypher parameter in a query."""
 
     @property
     @abstractproperty
@@ -45,14 +51,16 @@ class CypherQuery(object):
         return '<CypherQuery ("{0}")>'.format(self._query[:end] + dots)
 
     @property
-    def parames(self):
+    def params(self):
         try:
             return self._params
         except AttributeError:
-            self._params = self.construct_params(self._query)
+            self._params = self.find_params_in_query(self._query)
 
         return self._params
 
-    @staticmethod
-    def construct_params(query):
-        pass
+    @classmethod
+    def find_params_in_query(cls, query):
+        params = cls.PARAM_FINDING_REGEX.findall(query)
+        one_or_other = lambda x, y: x if len(y) == 0 else y
+        return ParameterSet([one_or_other(*p) for p in params])

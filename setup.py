@@ -30,6 +30,7 @@ setup(
     platforms='any',
     install_requires=[
         'six',
+        'regex',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

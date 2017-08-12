@@ -1,7 +1,55 @@
+from collections import namedtuple
 from unittest import TestCase
 
 from oopycql.query import CypherQuery
 
+
+class RegexForParameterFindingTestCase(TestCase):
+    TestParamFinderQuery = namedtuple('TestParamFinderQuery', 'query params')
+    TEST_QUERIES = [
+        TestParamFinderQuery(
+			'MATCH (a:Node) WHERE a.name = {param} AND a.woof = {param2}',
+			{'param', 'param2'}
+		),
+		TestParamFinderQuery(
+			'MATCH (a:Node) WHERE a.name = $param',
+			{'param'}
+		),
+		TestParamFinderQuery(
+			'MATCH (a:Node { name: { param } })',
+			{'param'}
+		),
+		TestParamFinderQuery(
+			'MATCH (a:Node { name: $param })',
+			{'param'}
+		),
+		TestParamFinderQuery(
+			'MATCH (a:Node { name: $héllo })',
+			{'héllo'}
+		),
+		TestParamFinderQuery(
+			'MATCH (a) WHERE a.p = { a¢1轉123 } RETURN *',
+			{'a¢1轉123'}
+		),
+        TestParamFinderQuery(
+			'MATCH (a) WHERE a.p = { a¢1轉123 } '
+            + 'AND a.q <> { a¢1轉123 } RETURN *',
+			{'a¢1轉123'}
+		),
+        TestParamFinderQuery(
+			'MATCH (a) WHERE a.p = { a¢1轉123 } '
+            + 'AND a.q <> $a¢1轉123 RETURN *',
+			{'a¢1轉123'}
+		),
+    ]
+
+    def test_all_test_queries(self):
+        for q in self.TEST_QUERIES:
+            ps = CypherQuery.find_params_in_query(q.query)
+            print('Testing for {0}'.format(q.query))
+            print(ps)
+            assert len(ps) == len(q.params)
+            assert ps == q.params
 
 class CypherQueryInterfaceTestCase(TestCase):
     """Check the interface for various debugging and inheritance
