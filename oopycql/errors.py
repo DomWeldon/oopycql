@@ -1,0 +1,4 @@
+
+
+class ParameterNotSetError(ValueError):
+    pass

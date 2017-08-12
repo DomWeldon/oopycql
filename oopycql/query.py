@@ -4,7 +4,7 @@ from six import add_metaclass
 
 import regex
 
-from .collections import ParameterSet
+from .collections import ParameterMap, ParameterSet
 
 
 class AbstractCypherQuery(ABCMeta):
@@ -55,7 +55,9 @@ class CypherQuery(object):
         try:
             return self._params
         except AttributeError:
-            self._params = self.find_params_in_query(self._query)
+            self._params = ParameterMap(
+                self.find_params_in_query(self._query)
+            )
 
         return self._params
 
