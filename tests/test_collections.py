@@ -10,7 +10,8 @@ class ParameterSetTestCase(TestCase):
 
 
 class ParameterMapTestCase(TestCase):
-    """Specialist collection CQL paramters"""
+    """A dictionary like collection used to store parameters in a CQL
+    query, and to set their values."""
     def get_param_map(self):
         """handy little constructor"""
         pm = ParameterMap(ParameterSet(('param1', 'param2')))
