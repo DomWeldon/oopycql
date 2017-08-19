@@ -127,7 +127,8 @@ class CypherQuery(object):
     @lru_cache(maxsize=64)
     def find_params_in_query(cls, query):
         params = cls.PARAM_FINDING_REGEX.findall(query)
-        one_or_other = lambda x, y: x if len(y) == 0 else y
+        def one_or_other(*args):
+            return [a for a in args if len(a) > 0][0]
         return ParameterSet([one_or_other(*p) for p in params])
 
     @classmethod
@@ -190,7 +191,7 @@ class CypherQuery(object):
             except IndexError:
                 output.append(c)
             except TypeError:
-                output.append(c))
+                output.append(c)
             if current_depth > 0 \
                and c == ':' \
                and output[-1].component_type == QueryComponent.PARAMETER_IN_BRACES:

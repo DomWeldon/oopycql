@@ -16,6 +16,22 @@ class RegexForParameterFindingTestCase(TestCase):
 			'MATCH (a:Node) WHERE a.name = $param',
 			{'param'}
 		),
+        TestParamFinderQuery(
+			'MATCH (a:Node) WHERE a.name = $`silly param`',
+			{'silly param'}
+		),
+        TestParamFinderQuery(
+			'MATCH (a:Node) WHERE a.name = { `ridiculous param!` }',
+			{'ridiculous param!'}
+		),
+        TestParamFinderQuery(
+			'MATCH (a:Node) WHERE a.name = { a }',
+			{'a'}
+		),
+        TestParamFinderQuery(
+			'MATCH (a:Node) WHERE a.name = { 1 }',
+			{'1'}
+		),
 		TestParamFinderQuery(
 			'MATCH (a:Node { name: { param } })',
 			{'param'}
