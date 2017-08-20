@@ -29,8 +29,7 @@ class ParameterMap(UserDict):
         return self.items()
 
     def __repr__(self):
-        td = {k: v for k, v in self.items()}
-        return 'ParameterMap({0})'.format(repr({ k for k in self.keys() }))
+        return 'ParameterMap({0})'.format(repr({k for k in self.keys()}))
 
     def __str__(self):
         return repr(self)

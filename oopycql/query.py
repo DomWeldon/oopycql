@@ -3,7 +3,6 @@ try:
     from functools import lru_cache
 except ImportError:
     from functools32 import lru_cache
-import reprlib
 from six import add_metaclass
 
 import regex
@@ -67,6 +66,8 @@ class CypherQuery(object):
     @lru_cache(maxsize=64)
     def find_params_in_query(cls, query):
         params = cls.PARAM_FINDING_REGEX.findall(query)
+
         def one_or_other(*args):
             return [a for a in args if len(a) > 0][0]
+
         return ParameterSet([one_or_other(*p) for p in params])

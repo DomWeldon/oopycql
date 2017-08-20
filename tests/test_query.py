@@ -1,5 +1,4 @@
 from collections import namedtuple
-from pprint import pprint
 from unittest import TestCase
 
 from oopycql.query import CypherQuery
@@ -9,55 +8,43 @@ class RegexForParameterFindingTestCase(TestCase):
     TestParamFinderQuery = namedtuple('TestParamFinderQuery', 'query params')
     TEST_QUERIES = [
         TestParamFinderQuery(
-			'MATCH (a:Node) WHERE a.name = {param} AND a.woof = {param2}',
-			{'param', 'param2'}
-		),
-		TestParamFinderQuery(
-			'MATCH (a:Node) WHERE a.name = $param',
-			{'param'}
-		),
+            'MATCH (a:Node) WHERE a.name = {param} AND a.woof = {param2}',
+            {'param', 'param2'}),
         TestParamFinderQuery(
-			'MATCH (a:Node) WHERE a.name = $`silly param`',
-			{'silly param'}
-		),
+            'MATCH (a:Node) WHERE a.name = $param',
+            {'param'}),
         TestParamFinderQuery(
-			'MATCH (a:Node) WHERE a.name = { `ridiculous param!` }',
-			{'ridiculous param!'}
-		),
+            'MATCH (a:Node) WHERE a.name = $`silly param`',
+            {'silly param'}),
         TestParamFinderQuery(
-			'MATCH (a:Node) WHERE a.name = { a }',
-			{'a'}
-		),
+            'MATCH (a:Node) WHERE a.name = { `ridiculous param!` }',
+            {'ridiculous param!'}),
         TestParamFinderQuery(
-			'MATCH (a:Node) WHERE a.name = { 1 }',
-			{'1'}
-		),
-		TestParamFinderQuery(
-			'MATCH (a:Node { name: { param } })',
-			{'param'}
-		),
-		TestParamFinderQuery(
-			'MATCH (a:Node { name: $param })',
-			{'param'}
-		),
-		TestParamFinderQuery(
-			'MATCH (a:Node { name: $héllo })',
-			{'héllo'}
-		),
-		TestParamFinderQuery(
-			'MATCH (a) WHERE a.p = { a¢1轉123 } RETURN *',
-			{'a¢1轉123'}
-		),
+            'MATCH (a:Node) WHERE a.name = { a }',
+            {'a'}),
         TestParamFinderQuery(
-			'MATCH (a) WHERE a.p = { a¢1轉123 } '
-            + 'AND a.q <> { a¢1轉123 } RETURN *',
-			{'a¢1轉123'}
-		),
+            'MATCH (a:Node) WHERE a.name = { 1 }',
+            {'1'}),
         TestParamFinderQuery(
-			'MATCH (a) WHERE a.p = { a¢1轉123 } '
-            + 'AND a.q <> $a¢1轉123 RETURN *',
-			{'a¢1轉123'}
-		),
+            'MATCH (a:Node { name: { param } })',
+            {'param'}),
+        TestParamFinderQuery(
+            'MATCH (a:Node { name: $param })',
+            {'param'}),
+        TestParamFinderQuery(
+            'MATCH (a:Node { name: $héllo })',
+            {'héllo'}),
+        TestParamFinderQuery(
+            'MATCH (a) WHERE a.p = { a¢1轉123 } RETURN *',
+            {'a¢1轉123'}),
+        TestParamFinderQuery(
+            'MATCH (a) WHERE a.p = { a¢1轉123 } '
+            'AND a.q <> { a¢1轉123 } RETURN *',
+            {'a¢1轉123'}),
+        TestParamFinderQuery(
+            'MATCH (a) WHERE a.p = { a¢1轉123 } '
+            'AND a.q <> $a¢1轉123 RETURN *',
+            {'a¢1轉123'}),
     ]
 
     def test_all_test_queries(self):
