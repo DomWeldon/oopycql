@@ -9,11 +9,25 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
+append_to_deps = []
+try:
+    from functools import lru_cache
+    del lru_cache
+except ImportError:
+    append_to_deps.append('functools32')
+
 __author__ = 'Dom Weldon <dom.weldon@gmail.com>'
 __email__ = 'dom.weldon@gmail.com'
 __license__ = 'Apache License, Version 2.0'
 __package__ = 'oopycql'
 __version__ = '1.1.0a0'
+
+required_deps = [
+    'six',
+    'regex',
+    'collections',
+] + append_to_deps
+
 
 setup(
     name='oopycql',
@@ -28,12 +42,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     platforms='any',
-    install_requires=[
-        'six',
-        'regex',
-        'functools32;python_version<"3.2"',
-        'collections',
-    ],
+    install_requires=required_deps,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
