@@ -32,6 +32,7 @@ setup(
         'six',
         'regex',
         'functools32;python_version<"3.2"',
+        'collections',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
