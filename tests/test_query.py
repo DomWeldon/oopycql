@@ -51,7 +51,7 @@ class RegexForParameterFindingTestCase(TestCase):
     def test_all_test_queries(self):
         for q in self.TEST_QUERIES:
             ps = CypherQuery.find_params_in_query(q.query)
-            print('Testing for {0}'.format(q.query.encode('utf8')))
+            print('Testing for {0}'.format(q.query))
             print(str(ps).encode('utf8'))
             assert len(ps) == len(q.params)
             assert ps == q.params

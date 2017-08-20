@@ -48,6 +48,7 @@ book/_build
 
 # Virtual environment
 venv
+venv2
 
 .cache
 .bau
