@@ -32,7 +32,7 @@ class RegexForParameterFindingTestCase(TestCase):
         TestParamFinderQuery(
             'MATCH (a:Node { name: $param })',
             {'param'}),
-        TestParamFinderQuery(u'MATCH (a:Node { name: $héllo })',set([u'héllo']),
+        TestParamFinderQuery(u'MATCH (a:Node { name: $héllo })',set([u'héllo'])),
         TestParamFinderQuery(
             u'MATCH (a) WHERE a.p = { a¢1轉123 } RETURN *',
             {u'a¢1轉123'}),
