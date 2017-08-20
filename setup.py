@@ -31,6 +31,7 @@ setup(
     install_requires=[
         'six',
         'regex',
+        'functools32;python_version<"3.2"',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
