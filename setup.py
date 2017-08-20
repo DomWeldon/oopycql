@@ -25,7 +25,6 @@ __version__ = '1.1.0a0'
 required_deps = [
     'six',
     'regex',
-    'collections',
 ] + append_to_deps
 
 
