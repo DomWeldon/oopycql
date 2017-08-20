@@ -32,19 +32,19 @@ class RegexForParameterFindingTestCase(TestCase):
             'MATCH (a:Node { name: $param })',
             {'param'}),
         TestParamFinderQuery(
-            'MATCH (a:Node { name: $héllo })',
-            {'héllo'}),
+            u'MATCH (a:Node { name: $héllo })',
+            {u'héllo'}),
         TestParamFinderQuery(
-            'MATCH (a) WHERE a.p = { a¢1轉123 } RETURN *',
-            {'a¢1轉123'}),
+            u'MATCH (a) WHERE a.p = { a¢1轉123 } RETURN *',
+            {u'a¢1轉123'}),
         TestParamFinderQuery(
-            'MATCH (a) WHERE a.p = { a¢1轉123 } '
-            'AND a.q <> { a¢1轉123 } RETURN *',
-            {'a¢1轉123'}),
+            u'MATCH (a) WHERE a.p = { a¢1轉123 } '
+            u'AND a.q <> { a¢1轉123 } RETURN *',
+            {u'a¢1轉123'}),
         TestParamFinderQuery(
-            'MATCH (a) WHERE a.p = { a¢1轉123 } '
-            'AND a.q <> $a¢1轉123 RETURN *',
-            {'a¢1轉123'}),
+            u'MATCH (a) WHERE a.p = { a¢1轉123 } '
+            u'AND a.q <> $a¢1轉123 RETURN *',
+            {u'a¢1轉123'}),
     ]
 
     def test_all_test_queries(self):
