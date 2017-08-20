@@ -1,3 +1,4 @@
+# coding: utf8
 from collections import namedtuple
 from unittest import TestCase
 
