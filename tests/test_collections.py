@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from oopycql.errors import ParameterNotSetError
-from oopycql.collections import ParameterMap, ParameterSet
+from oopycql.oopycql_collections import ParameterMap, ParameterSet
 
 
 class ParameterSetTestCase(TestCase):

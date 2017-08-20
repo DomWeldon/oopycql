@@ -7,7 +7,7 @@ from six import add_metaclass
 
 import regex
 
-from .oopycql_ollections import ParameterMap, ParameterSet
+from .oopycql_collections import ParameterMap, ParameterSet
 from .cypher import CypherReference
 
 
