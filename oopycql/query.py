@@ -1,8 +1,8 @@
 from abc import abstractproperty, ABCMeta
 try:
     from functools import lru_cache
-except ImportError:  # pragma: no cover_py3
-    from functools32 import lru_cache  # pragma: no cover_py3
+except ImportError:  # pragma: no cover
+    from functools32 import lru_cache  # pragma: no cover
 from six import add_metaclass
 
 import regex

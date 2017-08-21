@@ -8,14 +8,11 @@ python:
   - "3.6"
   - "3.7-dev"
 
-# command to install dependencies
 install:
   - sudo apt-get update
   - "pip install -r requirements.txt"
   - pip install -e .
 
-
-# command to run tests
 script:
   - py.test --cov=oopycql tests/
 

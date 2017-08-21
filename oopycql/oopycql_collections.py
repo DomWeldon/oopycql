@@ -2,9 +2,9 @@ try:
     from collections import UserDict
 except ImportError:
     # python2
-    class UserDict(object):  # pragma: no_cover_py3
-        def __init__(self):  # pragma: no cover_py3
-            self.data = {}  # pragma: no cover_py3
+    class UserDict(object):  # pragma: no_cover
+        def __init__(self):  # pragma: no cover
+            self.data = {}  # pragma: no cover
 
 from .errors import ParameterNotSetError
 
