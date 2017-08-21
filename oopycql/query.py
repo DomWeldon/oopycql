@@ -1,8 +1,8 @@
 from abc import abstractproperty, ABCMeta
 try:
     from functools import lru_cache
-except ImportError:
-    from functools32 import lru_cache
+except ImportError:  # pragma: no cover_py3
+    from functools32 import lru_cache  # pragma: no cover_py3
 from six import add_metaclass
 
 import regex
@@ -23,7 +23,7 @@ class AbstractCypherQuery(ABCMeta):
     @property
     @abstractproperty
     def params(self):
-        pass
+        pass  # pragma: no cover
 
 
 @add_metaclass(AbstractCypherQuery)

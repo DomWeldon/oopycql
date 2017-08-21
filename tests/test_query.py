@@ -12,6 +12,9 @@ class RegexForParameterFindingTestCase(TestCase):
             'MATCH (a:Node) WHERE a.name = {param} AND a.woof = {param2}',
             {'param', 'param2'}),
         TestParamFinderQuery(
+            'MATCH (a:Node) WHERE a.name = {some_param} AND a.woof = {param2}',
+            {'param2', 'some_param'}),
+        TestParamFinderQuery(
             'MATCH (a:Node) WHERE a.name = $param',
             {'param'}),
         TestParamFinderQuery(
@@ -61,15 +64,29 @@ class CypherQueryInterfaceTestCase(TestCase):
     """Check the interface for various debugging and inheritance
     purposes"""
 
-    q = 'MATCH (n) RETURN (n)'
+    q0 = 'MATCH (n) RETURN (n)'
+    """Example query used in this test."""
+    q1 = 'MATCH (n:SomeLabel) WHERE n.some_property = {some_param} RETURN n'
     """Example query used in this test."""
 
     def test_init_constructor(self):
-        cq = CypherQuery(self.q)
-        assert cq._query == self.q
+        cq = CypherQuery(self.q0)
+        assert cq._query == self.q0
 
     def test_repr_shows_query(self):
-        assert self.q[:37] in repr(CypherQuery(self.q))
+        assert self.q0[:37] in repr(CypherQuery(self.q0))
+
+    def test_repr_shows_ellipsis(self):
+        cq = CypherQuery(self.q1)
+        assert self.q1[:37] in repr(cq)
+        assert repr(cq)[-6:-3] == '...'
 
     def test_str_interface(self):
-        assert str(CypherQuery(self.q)) == self.q
+        assert str(CypherQuery(self.q0)) == self.q0
+
+    def test_param_finder(self):
+        cq = CypherQuery(self.q1)
+        print(cq, cq.params, CypherQuery.find_params_in_query(self.q1))
+        p = cq.params
+        assert 'some_param' in p
+        assert p == cq._params

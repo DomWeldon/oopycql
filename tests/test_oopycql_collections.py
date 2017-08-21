@@ -22,9 +22,28 @@ class ParameterMapTestCase(TestCase):
         print(pm, eval(repr(pm)))
         assert eval(repr(pm)) == pm
 
+    def test_will_iter_keys(self):
+        pm = self.get_param_map()
+        keys = [k for k in pm]
+        assert len(keys) == 2
+        for k in pm.keys():
+            assert k in keys
+
     def test_str_is_repr(self):
         pm = self.get_param_map()
         assert str(pm) == repr(pm)
+
+    def test_python2_iteration(self):
+        pm = self.get_param_map()
+        try:
+            d = {k: v for k, v in pm.iteritems()}
+            for k in pm.keys():
+                assert k in d
+                assert d[k] == pm[k]
+        except Exception:
+            assert False
+        else:
+            assert True
 
     def test_iteration_on_items(self):
         pm = self.get_param_map()
@@ -33,6 +52,7 @@ class ParameterMapTestCase(TestCase):
             d = {k: v for k, v in pm.items()}
             for k in pm.keys():
                 assert k in d
+                assert d[k] == pm[k]
         except Exception:
             assert False
         else:
@@ -46,6 +66,11 @@ class ParameterMapTestCase(TestCase):
         assert pm != pm2
         pm['param1'] = 2
         assert pm == pm2
+
+    def test_inequality_on_length(self):
+        pm = self.get_param_map()
+        pm2 = ParameterMap()
+        assert pm != pm2
 
     def test_len_and_bool(self):
         pm = self.get_param_map()

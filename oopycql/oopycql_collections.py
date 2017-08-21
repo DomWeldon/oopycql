@@ -2,9 +2,9 @@ try:
     from collections import UserDict
 except ImportError:
     # python2
-    class UserDict(object):
-        def __init__(self):
-            self.data = {}
+    class UserDict(object):  # pragma: no_cover_py3
+        def __init__(self):  # pragma: no cover_py3
+            self.data = {}  # pragma: no cover_py3
 
 from .errors import ParameterNotSetError
 
@@ -17,7 +17,7 @@ class ParameterMap(UserDict):
         :param keys: iterable of parameter names
         """
         UserDict.__init__(self)
-        self._keys = keys
+        self._keys = keys if keys is not None else ParameterSet()
 
     def keys(self):
         return self._keys
@@ -54,7 +54,7 @@ class ParameterMap(UserDict):
         ))
 
     def __iter__(self):
-        return self.keys()
+        return iter(self.keys())
 
     def __len__(self):
         return len(self.keys())
@@ -73,6 +73,9 @@ class ParameterMap(UserDict):
 
     def __bool__(self):
         return len(self) > 0
+
+    def __contains__(self, item):
+        return item in self.keys()
 
 
 class ParameterSet(set):

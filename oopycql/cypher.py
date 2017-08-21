@@ -8,13 +8,15 @@ class CypherReference(object):
         # e.g. { param }
         '{ *'
         '([^\p{Sc}\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{P}\p{M}]'
-        '[^\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{P}\p{M}]*)'
+        '[^\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{Pd}\p{Pe}\p{Pf}'
+        '\p{Pi}\p{Po}\p{Ps}\p{M}]*)'
         ' *}'
         '|'
         # e.g. $param
         '\$'
         '([^\p{Sc}\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{P}\p{M}]'
-        '[^\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{P}\p{M}]*)'
+        '[^\p{Sm}\p{So}\p{Sk}\p{C}\p{Z}\p{Pd}\p{Pe}\p{Pf}'
+        '\p{Pi}\p{Po}\p{Ps}\p{M}]*)'
         '|'
         # e.g. { `silly param` }
         '{ *`'
