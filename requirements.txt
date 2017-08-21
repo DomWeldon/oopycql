@@ -1,3 +1,6 @@
 pytest
 flake8
 regex
+coverage
+pytest-cov
+python-coveralls
