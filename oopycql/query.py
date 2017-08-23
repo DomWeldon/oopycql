@@ -80,9 +80,10 @@ class CypherQuery(object):
     def from_file(cls, filename, relative_to=None):
         """Exactly like `load_from_file`, but cached.
         """
-        return cls.load_from_file(cls, filename, relative_to=relative_to,
+        return cls.load_from_file(filename, relative_to=relative_to,
                                   depth=2)
 
+    @classmethod
     def load_from_file(cls, filename, relative_to=None, depth=1):
         """Constructor to load a CypherQuery object from a file.
 
