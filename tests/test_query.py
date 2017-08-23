@@ -1,5 +1,6 @@
 # coding: utf8
 from collections import namedtuple
+import os
 from unittest import TestCase
 
 from oopycql.query import CypherQuery
@@ -90,3 +91,16 @@ class CypherQueryInterfaceTestCase(TestCase):
         p = cq.params
         assert 'some_param' in p
         assert p == cq._params
+
+
+class CypherQueryFileConstructorTestCase(TestCase):
+    """Check that CypherQuery objects can be loaded from a file.
+    """
+    def test_file_constructor(self):
+        cq = CypherQuery.from_file('fixtures/q1.cql')
+        assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
+
+    def test_file_constructor(self):
+        rt = os.path.dirname(os.path.abspath(__file__))
+        cq = CypherQuery.from_file('fixtures/q2.cql', relative_to=rt)
+        assert str(cq) == 'MATCH (n) RETURN COUNT(n) AS q2_return\n'

@@ -4,6 +4,7 @@ OOPyCQL
 
 An object oritneted interface for the Cypher Query Language in Python.
 """
+import sys
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -15,6 +16,9 @@ try:
     del lru_cache
 except ImportError:
     append_to_deps.append('functools32')
+
+if sys.version_info.major < 3 or sys.version_info.minor < 4:
+    append_to_deps.append('pathlib')
 
 __author__ = 'Dom Weldon <dom.weldon@gmail.com>'
 __email__ = 'dom.weldon@gmail.com'
@@ -61,6 +65,5 @@ setup(
     test_suite='py.test',
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],
-    python_requires='>=2.7'#,
-    #download_url='https://github.com/domweldon/flask_ogm/archive/1.1.0.tar.gz'
+    python_requires='>=2.7'
 )

@@ -3,7 +3,10 @@ try:
     from functools import lru_cache
 except ImportError:  # pragma: no cover
     from functools32 import lru_cache  # pragma: no cover
+import inspect
 from six import add_metaclass
+from pathlib import Path
+from pprint import pprint
 
 import regex
 
@@ -71,3 +74,33 @@ class CypherQuery(object):
             return [a for a in args if len(a) > 0][0]
 
         return ParameterSet([one_or_other(*p) for p in params])
+
+    @classmethod
+    @lru_cache(maxsize=64)
+    def from_file(cls, filename, relative_to=None):
+        """Exactly like `load_from_file`, but cached.
+        """
+        return cls.load_from_file(cls, filename, relative_to=relative_to,
+                                  depth=2)
+
+    def load_from_file(cls, filename, relative_to=None, depth=1):
+        """Constructor to load a CypherQuery object from a file.
+
+        :param filename: either a ``Path`` object or a string filename
+        :param relative_to: directory relative to which the query
+                            should be found, either a string or Path
+                            object; if left as None, then will be
+                            called relative to the file which called
+                            the function (i.e., previous file in
+                            the stack)
+        :return: CypherQuery
+        """
+        f = filename if isinstance(filename, Path) else Path(filename)
+        if relative_to is None:
+            relative_to = Path(inspect.stack()[depth].filename).parent
+        elif not isinstance(relative_to, Path):
+            relative_to = Path(relative_to)
+        f = relative_to / f
+        with f.open('r') as _:
+            q = _.read()
+        return cls(q)
