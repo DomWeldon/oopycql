@@ -100,7 +100,7 @@ class CypherQueryFileConstructorTestCase(TestCase):
         cq = CypherQuery.from_file('fixtures/q1.cql')
         assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
 
-    def test_file_constructor(self):
+    def test_file_constructor2(self):
         rt = os.path.dirname(os.path.abspath(__file__))
         cq = CypherQuery.from_file('fixtures/q2.cql', relative_to=rt)
         assert str(cq) == 'MATCH (n) RETURN COUNT(n) AS q2_return\n'

@@ -4,3 +4,4 @@ regex
 coverage
 pytest-cov
 python-coveralls
+sphinx

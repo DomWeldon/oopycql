@@ -6,7 +6,6 @@ except ImportError:  # pragma: no cover
 import inspect
 from six import add_metaclass
 from pathlib import Path
-from pprint import pprint
 
 import regex
 
@@ -34,7 +33,7 @@ class CypherQuery(object):
     """Interface for a cypher query.
     """
     def __init__(self, query=None):
-        """Construct, optionally passing query as a string.
+        """Constructor, optionally passing query as a string.
 
         :param query: cypher query as string
         """
