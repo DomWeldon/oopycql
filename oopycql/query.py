@@ -37,12 +37,17 @@ class AbstractCypherQuery(ABCMeta):
 class CypherQuery(object):
     """Interface for a cypher query.
     """
-    def __new__(cls, *args, query=None):
+    def __new__(cls, *args, **kwargs):
         """Constructor, optionally passing query as a string.
 
         :param query: cypher query as string
         :param fqn: Fully Qualified Name to import the query as
         """
+        try:
+            query = kwargs['query']
+        except KeyError:
+            query = None
+
         if len(args) == 1 and query is None:
             fqn = args[0]
             if fqn[0] == '.':
@@ -139,7 +144,12 @@ class CypherQuery(object):
         """
         f = filename if isinstance(filename, Path) else Path(filename)
         if relative_to is None:
-            relative_to = Path(inspect.stack()[depth].filename).parent
+            try:
+                f = inspect.stack()[depth].filename
+            except AttributeError:
+                # python 2.7
+                f = inspect.stack()[depth][1]
+            relative_to = Path(f).parent
         elif not isinstance(relative_to, Path):
             relative_to = Path(relative_to)
         f = relative_to / f
