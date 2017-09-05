@@ -39,6 +39,11 @@ To load a query in ``views.py``, you could use the below:
     # absolute style import
     cq = CypherQuery('src.controllers.login.cql.create_login_event')
 
+
+## License
+
+Apache
+
 ## Author
 
 Dom Weldon

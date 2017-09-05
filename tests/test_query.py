@@ -176,6 +176,7 @@ class CypherQueryFileConstructorTestCase(TestCase):
         cq = CypherQuery()
         assert len(cq.params) == 0
 
+
 class MyComplexQuery(CypherQuery):
     """Test complex query subclassing CypherQuery"""
     def __init__(self):
@@ -185,6 +186,7 @@ class MyComplexQuery(CypherQuery):
         """Call this method to make the query return the ``id`` of
         ``a``"""
         self._query += '\nRETURN id(a) AS a_id'
+
 
 class TestSubclassingTestCase(TestCase):
     """Test the subclassing interface"""

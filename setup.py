@@ -6,9 +6,9 @@ An object oritneted interface for the Cypher Query Language in Python.
 """
 import sys
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup
 except ImportError:
-    from distutils.core import setup, find_packages
+    from distutils.core import setup
 
 append_to_deps = []
 try:
