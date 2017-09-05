@@ -1,3 +1,4 @@
+from pprint import pprint
 from abc import abstractproperty, ABCMeta
 try:
     from functools import lru_cache
@@ -144,8 +145,14 @@ class CypherQuery(object):
         """
         f = filename if isinstance(filename, Path) else Path(filename)
         if relative_to is None:
-
-            relative_to = Path(inspect.stack()[depth].filename).parent
+            try:
+                relative_to = Path(inspect.stack()[depth].filename).parent
+            except AttributeError:
+                pprint(inspect.stack()[depth+1])
+                # python 2.7 issue
+                if 'functools' in inspect.stack()[depth][1]:
+                    depth += 1
+                relative_to = Path(inspect.stack()[depth][1]).parent
         elif not isinstance(relative_to, Path):
             relative_to = Path(relative_to)
         f = relative_to / f
@@ -153,7 +160,6 @@ class CypherQuery(object):
             q = _.read()
         cq = object.__new__(cls)
         cq._query = q
-        print(153, cq)
         return cq
 
     @property
