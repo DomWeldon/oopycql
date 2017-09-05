@@ -132,7 +132,8 @@ class CypherQueryFileConstructorTestCase(TestCase):
 
     def test_illegal_arguments(self):
         try:
-            CypherQuery('tests.cql.from_module', query='MATCH (n) RETURN COUNT(n)')
+            CypherQuery('tests.cql.from_module',
+                        query='MATCH (n) RETURN COUNT(n)')
         except ValueError:
             assert True
         else:

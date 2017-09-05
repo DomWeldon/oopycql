@@ -67,6 +67,9 @@ API
 
 .. py:currentmodule:: oopycql
 
+.. autoclass:: AbstractCypherQuery
+  :members:
+
 .. autoclass:: CypherQuery
   :members:
 

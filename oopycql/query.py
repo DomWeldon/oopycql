@@ -1,4 +1,3 @@
-from pprint import pprint
 from abc import abstractproperty, ABCMeta
 try:
     from functools import lru_cache
@@ -11,6 +10,7 @@ except NameError:
     # python3
     from functools import reduce
 from six import add_metaclass
+from sys import version_info
 from pathlib import Path
 
 import regex
@@ -57,13 +57,11 @@ class CypherQuery(object):
             else:
                 relative_to = './'
             filename = reduce(lambda x, y:  x / Path(y), fqn.split('.'))
-            try:
-                unicode
-            except NameError:
-                depth = 3
-                pass
-            else:
+            if version_info.major == 2 \
+               or (version_info.major == 3 and version_info.minor < 5):
                 depth = 4
+            else:
+                depth = 3
             return cls.from_file(filename.with_suffix('.cql'),
                                  relative_to=relative_to,
                                  depth=depth)
@@ -118,15 +116,11 @@ class CypherQuery(object):
         p = Path(f)
         if extension is not None:
             p = p.with_suffix(extension)
-        try:
-            unicode
-        except NameError:
-            # python3
-            depth = 3
-            pass
-        else:
-            # python2
+        if version_info.major == 2 \
+           or (version_info.major == 3 and version_info.minor < 5):
             depth = 4
+        else:
+            depth = 3
         return cls.from_file(p, depth=depth)
 
     @classmethod
@@ -178,7 +172,6 @@ class CypherQuery(object):
                 # python 2.7 issue
                 if 'functools' in inspect.stack()[depth][1]:
                     depth += 1
-                pprint(inspect.stack()[depth-1:depth+2])
                 relative_to = Path(inspect.stack()[depth][1]).parent
         elif not isinstance(relative_to, Path):
             relative_to = Path(relative_to)
