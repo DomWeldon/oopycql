@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CypherQuery &#8212; OOPyCQL 0.1.0a documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cypherquery">
+<h1>CypherQuery<a class="headerlink" href="#cypherquery" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="oopycql.CypherQuery">
+<em class="property">class </em><code class="descclassname">oopycql.</code><code class="descname">CypherQuery</code><span class="sig-paren">(</span><em>*arks</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface for a cypher query.</p>
+<dl class="classmethod">
+<dt id="oopycql.CypherQuery.from_file">
+<em class="property">classmethod </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>relative_to=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly like <cite>load_from_file</cite>, but cached.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="oopycql.CypherQuery.from_module">
+<em class="property">classmethod </em><code class="descname">from_module</code><span class="sig-paren">(</span><em>f</em>, <em>extension='.cql'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery.from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery.from_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a CQL query from the current module. By default, it is
+assumed that there is directory called CQL which contains the
+queries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> – filename of the query</li>
+<li><strong>submodule</strong> – the directory name to load from, cql by
+default, if None then will use current module
+directory.</li>
+<li><strong>extension</strong> – the file extension (inc dot) of the query, if
+None then will assume no extension</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#oopycql.CypherQuery" title="oopycql.CypherQuery">CypherQuery</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">CypherQuery</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="oopycql.CypherQuery.load_from_file">
+<em class="property">classmethod </em><code class="descname">load_from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>relative_to=None</em>, <em>depth=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery.load_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery.load_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor to load a CypherQuery object from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> – either a <code class="docutils literal"><span class="pre">Path</span></code> object or a string filename</li>
+<li><strong>relative_to</strong> – directory relative to which the query
+should be found, either a string or Path
+object; if left as None, then will be
+called relative to the file which called
+the function (i.e., previous file in
+the stack)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">CypherQuery</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="oopycql.CypherQuery.params">
+<code class="descname">params</code><a class="headerlink" href="#oopycql.CypherQuery.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>A ParameterMap of all the parameters in the query alongside
+their values, if assigned. If no value is assigned to a param
+yet, None is assumed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">OOPyCQL</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">What? Why?</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dom Weldon.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/query.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

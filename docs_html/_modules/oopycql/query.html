@@ -1,0 +1,279 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>oopycql.query &#8212; OOPyCQL 0.1.0a documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for oopycql.query</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractproperty</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">lru_cache</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span> <span class="nn">functools32</span> <span class="k">import</span> <span class="n">lru_cache</span>  <span class="c1"># pragma: no cover</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">reduce</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="c1"># python3</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">add_metaclass</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">regex</span>
+
+<span class="kn">from</span> <span class="nn">.oopycql_collections</span> <span class="k">import</span> <span class="n">ParameterMap</span><span class="p">,</span> <span class="n">ParameterSet</span>
+<span class="kn">from</span> <span class="nn">.cypher</span> <span class="k">import</span> <span class="n">CypherReference</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractCypherQuery</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract class to ensure that future query objects implement the</span>
+<span class="sd">    rqwuired interface. This way Query objects do not need to inherit</span>
+<span class="sd">    from CypherQuery</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PARAM_FINDING_REGEX</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">CypherReference</span><span class="o">.</span><span class="n">PARAM_FINDING_REGEX</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Find a cypher parameter in a query.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>  <span class="c1"># pragma: no cover</span>
+
+
+<div class="viewcode-block" id="CypherQuery"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractCypherQuery</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">CypherQuery</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface for a cypher query.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor, optionally passing query as a string.</span>
+
+<span class="sd">        :param query: cypher query as string</span>
+<span class="sd">        :param fqn: Fully Qualified Name to import the query as</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fqn</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">fqn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+                <span class="n">relative_to</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">fqn</span> <span class="o">=</span> <span class="n">fqn</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">relative_to</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span>  <span class="n">x</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">fqn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.cql&#39;</span><span class="p">),</span>
+                                      <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
+                                      <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cq</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="n">cq</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">query</span>
+            <span class="k">return</span> <span class="n">cq</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal argument combination&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">query</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the query for use in graph.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">40</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="mi">37</span>
+                <span class="n">dots</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="mi">40</span>
+                <span class="n">dots</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="k">return</span> <span class="s1">&#39;CypherQuery(&quot;</span><span class="si">{0}</span><span class="s1">&quot;)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">[:</span><span class="n">end</span><span class="p">]</span> <span class="o">+</span> <span class="n">dots</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;CypherQuery()&#39;</span>
+
+<div class="viewcode-block" id="CypherQuery.from_module"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery.from_module">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.cql&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a CQL query from the current module. By default, it is</span>
+<span class="sd">        assumed that there is directory called CQL which contains the</span>
+<span class="sd">        queries.</span>
+
+<span class="sd">        :param f: filename of the query</span>
+<span class="sd">        :param submodule: the directory name to load from, cql by</span>
+<span class="sd">                          default, if None then will use current module</span>
+<span class="sd">                          directory.</span>
+<span class="sd">        :param extension: the file extension (inc dot) of the query, if</span>
+<span class="sd">                          None then will assume no extension</span>
+<span class="sd">        :rtype: CypherQuery</span>
+<span class="sd">        :return: CypherQuery</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">find_params_in_query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PARAM_FINDING_REGEX</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">one_or_other</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ParameterSet</span><span class="p">([</span><span class="n">one_or_other</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">])</span>
+
+<div class="viewcode-block" id="CypherQuery.from_file"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Exactly like `load_from_file`, but cached.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
+                                  <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CypherQuery.load_from_file"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery.load_from_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor to load a CypherQuery object from a file.</span>
+
+<span class="sd">        :param filename: either a ``Path`` object or a string filename</span>
+<span class="sd">        :param relative_to: directory relative to which the query</span>
+<span class="sd">                            should be found, either a string or Path</span>
+<span class="sd">                            object; if left as None, then will be</span>
+<span class="sd">                            called relative to the file which called</span>
+<span class="sd">                            the function (i.e., previous file in</span>
+<span class="sd">                            the stack)</span>
+<span class="sd">        :return: CypherQuery</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">relative_to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">relative_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">pprint</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                <span class="c1"># python 2.7 issue</span>
+                <span class="k">if</span> <span class="s1">&#39;functools&#39;</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">relative_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relative_to</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">relative_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">relative_to</span> <span class="o">/</span> <span class="n">f</span>
+        <span class="k">with</span> <span class="n">f</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_</span><span class="p">:</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">cq</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">cq</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">q</span>
+        <span class="k">return</span> <span class="n">cq</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A ParameterMap of all the parameters in the query alongside</span>
+<span class="sd">        their values, if assigned. If no value is assigned to a param</span>
+<span class="sd">        yet, None is assumed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">ParameterMap</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">find_params_in_query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">OOPyCQL</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">What? Why?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../query.html">CypherQuery</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dom Weldon.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

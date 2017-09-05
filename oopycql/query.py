@@ -60,7 +60,7 @@ class CypherQuery(object):
             return cls.load_from_file(filename.with_suffix('.cql'),
                                       relative_to=relative_to,
                                       depth=2)
-        elif query is not None:
+        elif len(args) == 0 and query is not None:
             cq = object.__new__(cls)
             cq._query = query
             return cq
@@ -76,7 +76,10 @@ class CypherQuery(object):
 
     def __str__(self):
         """Return the query for use in graph."""
-        return self._query
+        try:
+            return self._query
+        except AttributeError:
+            raise TypeError
 
     def __repr__(self):
         try:
@@ -88,7 +91,7 @@ class CypherQuery(object):
                 dots = ''
 
             return 'CypherQuery("{0}")'.format(self._query[:end] + dots)
-        except TypeError:
+        except (AttributeError, TypeError):
             return 'CypherQuery()'
 
     @classmethod
@@ -141,6 +144,13 @@ class CypherQuery(object):
                             called relative to the file which called
                             the function (i.e., previous file in
                             the stack)
+        :param depth: when relative_to is None, the function will
+                      use inspect.stack() to find the file in which
+                      the function was called. depth is the integer
+                      index of the stack where this file is found,
+                      if this function is called from another function
+                      (e.g., the cahced method above), then the depth
+                      needs to be increased.
         :return: CypherQuery
         """
         f = filename if isinstance(filename, Path) else Path(filename)

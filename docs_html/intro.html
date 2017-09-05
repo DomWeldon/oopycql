@@ -1,0 +1,129 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>What? Why? &#8212; OOPyCQL 0.1.0a documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to OOPyCQL’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="what-why">
+<h1>What? Why?<a class="headerlink" href="#what-why" title="Permalink to this headline">¶</a></h1>
+<p>OOPyCQL is a library designed to make the handling of cypher queries easier in python by providing an object interface for a cypher query. But, wait, why?</p>
+<p>I ❤ Cypher and I ❤ Python. But sometimes, this relationship gets a little complicated. Cypher (CQL) is a brilliant language which is expressive, intuitive and feature-rich (especially with libraries like APOC). Often a complex set of database actions can be conducted in a single transaction using just a few lines, saving lots of time and back-and-forth operations in python. In part, CQL is so expressive because it is based on the use of ASCII-art to describe patterns and relationships, making queries simple to understand by simply looking at it. Python, too, is a powerful and expressive language, and and good, ‘pythonic’ code is declarative and straightforward to read. Herein lies the problem: often I want to write a python program that takes a complex cypher query, runs it in my graph, and takes the results and does something with them (for example, in a Flask view). This means that my python program is reliant on a long string of CQL, which I care about and want to be able to edit and tweak, but which is a pain to put in my python script, and can make for some ugly looking code.</p>
+<p>See the examples below.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>q = (‘CREATE (this:Style { name: “Quoted text in Parentheses” })-[:IS]-&gt;’</dt>
+<dd>‘(:Judgement {
+‘  value: “Just plain ugly”’  # look at this ambiguous whitespace :-(
+‘})’)</dd>
+<dt>q = ‘’’  // look at all this whitespace!! and 79 ch limit is pain in the..</dt>
+<dd><dl class="first docutils">
+<dt>CREATE (this:Style { name: “Triple Quotes” })-[:IS]-&gt;(m:Modifier {</dt>
+<dd>value: “less”</dd>
+</dl>
+<p class="last">})-[:THAN]-&gt;(other:Style { name “Quoted text in Parentheses” })
+-[:BUT]-&gt;(:Judgement { value: “Still not great” })’‘’</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>Do your eyes hurt yet? These styles are obviously a distraction from writing good cypher: they confuse code lexers and produce weird formatting, make it a pain to spot bugs and syntax errors, and, well, just tire out my fingers sorting out all the whitespace and quotes flying around everywhere. Furthermore, if you’re building queries dynamically and want to use the formatting mini-language, then you get the added bonus of having to escape parentheses (e.g. <code class="docutils literal"><span class="pre">{{</span> <span class="pre">param_name</span> <span class="pre">}}</span></code>) in some queries but not others (to mention just one problem).</p>
+<p>Unfortunately the discipline and formatting required to write good python code (i.e., PEP8), makes it hard to include long and nicely formatted cypher queries directly in your code.</p>
+<p>So just use a file, right? Sure, you could load this from a file using <cite>open()</cite>, but (and here’s where it gets a little subjective), that just <em>feels</em> wrong. You have to decide where to keep the file relative to the code your working on (same directory, different directory, a central “queries” directory?) and figure out how to access it - something that can be a real pain if you’re working in a framework like Flask or Django where <code class="docutils literal"><span class="pre">__file__</span></code> will have a limited relationship to <code class="docutils literal"><span class="pre">os.getcwd()</span></code>. What’s more, you probably don’t want to put all your queries in files (so where do you draw the line), and if you’re building a complex query that depends on a few arguments you need to decide whether to split them, load some parts but not others, etc., etc.</p>
+<p>Here’s where OOPyCQL comes in. Python is an object oriented language, and this library implements an object-oriented interface for CQL queries which allows you to define, load, share and run Cypher queries in an application without getting caught up worrying about strings. What’s more, you can refer to cypher queries just like you would a python object.</p>
+<p>For example, if you had one of the queries above in a file called <code class="docutils literal"><span class="pre">src/examples/cql/style.cql</span></code>, you can reference the query using <code class="docutils literal"><span class="pre">CypherQuery('src.examples.cql.style')</span></code></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">OOPyCQL</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What? Why?</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to OOPyCQL’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dom Weldon.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/intro.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

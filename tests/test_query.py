@@ -116,3 +116,24 @@ class CypherQueryFileConstructorTestCase(TestCase):
     def test_module_new_relative(self):
         cq = CypherQuery('.cql.from_module')
         assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
+
+    def test_blank_constructor(self):
+        cq = CypherQuery()
+        try:
+            str(cq)
+        except TypeError:
+            assert True
+        else:
+            assert False
+
+    def test_blank_constructor_repr(self):
+        cq = CypherQuery()
+        assert repr(cq) == 'CypherQuery()'
+
+    def test_illegal_arguments(self):
+        try:
+            CypherQuery('tests.cql.from_module', query='MATCH (n) RETURN COUNT(n)')
+        except ValueError:
+            assert True
+        else:
+            assert False
