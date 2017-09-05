@@ -4,6 +4,11 @@ try:
 except ImportError:  # pragma: no cover
     from functools32 import lru_cache  # pragma: no cover
 import inspect
+try:
+    reduce
+except NameError:
+    # python3
+    from functools import reduce
 from six import add_metaclass
 from pathlib import Path
 
@@ -32,37 +37,74 @@ class AbstractCypherQuery(ABCMeta):
 class CypherQuery(object):
     """Interface for a cypher query.
     """
-    def __init__(self, query=None):
+    def __new__(cls, *args, query=None):
         """Constructor, optionally passing query as a string.
 
         :param query: cypher query as string
+        :param fqn: Fully Qualified Name to import the query as
         """
+        if len(args) == 1 and query is None:
+            fqn = args[0]
+            if fqn[0] == '.':
+                relative_to = None
+                fqn = fqn[1:]
+            else:
+                relative_to = './'
+            filename = reduce(lambda x, y:  x / Path(y), fqn.split('.'))
+            return cls.load_from_file(filename.with_suffix('.cql'),
+                                      relative_to=relative_to,
+                                      depth=2)
+        elif query is not None:
+            cq = object.__new__(cls)
+            cq._query = query
+            return cq
+
+        elif len(args) == 0 and query is None:
+            return object.__new__(cls)
+
+        raise ValueError('Illegal argument combination')
         self._query = query
+
+    def __init__(self, *arks, **kwargs):
+        pass
 
     def __str__(self):
         """Return the query for use in graph."""
         return self._query
 
     def __repr__(self):
-        if len(self._query) >= 40:
-            end = 37
-            dots = '...'
-        else:
-            end = 40
-            dots = ''
-
-        return '<CypherQuery ("{0}")>'.format(self._query[:end] + dots)
-
-    @property
-    def params(self):
         try:
-            return self._params
-        except AttributeError:
-            self._params = ParameterMap(
-                self.find_params_in_query(self._query)
-            )
+            if len(self._query) >= 40:
+                end = 37
+                dots = '...'
+            else:
+                end = 40
+                dots = ''
 
-        return self._params
+            return 'CypherQuery("{0}")'.format(self._query[:end] + dots)
+        except TypeError:
+            return 'CypherQuery()'
+
+    @classmethod
+    def from_module(cls, f, extension='.cql'):
+        """Load a CQL query from the current module. By default, it is
+        assumed that there is directory called CQL which contains the
+        queries.
+
+        :param f: filename of the query
+        :param submodule: the directory name to load from, cql by
+                          default, if None then will use current module
+                          directory.
+        :param extension: the file extension (inc dot) of the query, if
+                          None then will assume no extension
+        :rtype: CypherQuery
+        :return: CypherQuery
+        """
+        p = Path(f)
+        if extension is not None:
+            p = p.with_suffix(extension)
+
+        return cls.load_from_file(p, depth=2)
 
     @classmethod
     @lru_cache(maxsize=64)
@@ -103,4 +145,22 @@ class CypherQuery(object):
         f = relative_to / f
         with f.open('r') as _:
             q = _.read()
-        return cls(q)
+        cq = object.__new__(cls)
+        cq._query = q
+        print(153, cq)
+        return cq
+
+    @property
+    def params(self):
+        """A ParameterMap of all the parameters in the query alongside
+        their values, if assigned. If no value is assigned to a param
+        yet, None is assumed.
+        """
+        try:
+            return self._params
+        except AttributeError:
+            self._params = ParameterMap(
+                self.find_params_in_query(self._query)
+            )
+
+        return self._params

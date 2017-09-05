@@ -71,23 +71,23 @@ class CypherQueryInterfaceTestCase(TestCase):
     """Example query used in this test."""
 
     def test_init_constructor(self):
-        cq = CypherQuery(self.q0)
+        cq = CypherQuery(query=self.q0)
         assert cq._query == self.q0
 
     def test_repr_shows_query(self):
-        assert self.q0[:37] in repr(CypherQuery(self.q0))
+        assert self.q0[:37] in repr(CypherQuery(query=self.q0))
 
     def test_repr_shows_ellipsis(self):
-        cq = CypherQuery(self.q1)
+        cq = CypherQuery(query=self.q1)
         assert self.q1[:37] in repr(cq)
-        assert repr(cq)[-6:-3] == '...'
+        assert repr(cq)[-5:-2] == '...'
 
     def test_str_interface(self):
-        assert str(CypherQuery(self.q0)) == self.q0
+        assert str(CypherQuery(query=self.q0)) == self.q0
 
     def test_param_finder(self):
-        cq = CypherQuery(self.q1)
-        print(cq, cq.params, CypherQuery.find_params_in_query(self.q1))
+        cq = CypherQuery(query=self.q1)
+        print(cq, cq.params, CypherQuery.find_params_in_query(query=self.q1))
         p = cq.params
         assert 'some_param' in p
         assert p == cq._params
@@ -104,3 +104,15 @@ class CypherQueryFileConstructorTestCase(TestCase):
         rt = os.path.dirname(os.path.abspath(__file__))
         cq = CypherQuery.from_file('fixtures/q2.cql', relative_to=rt)
         assert str(cq) == 'MATCH (n) RETURN COUNT(n) AS q2_return\n'
+
+    def test_from_module_constructor(self):
+        cq = CypherQuery.from_module('query')
+        assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
+
+    def test_module_new(self):
+        cq = CypherQuery('tests.cql.from_module')
+        assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
+
+    def test_module_new_relative(self):
+        cq = CypherQuery('.cql.from_module')
+        assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
