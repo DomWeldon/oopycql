@@ -69,7 +69,6 @@ class CypherQuery(object):
             return object.__new__(cls)
 
         raise ValueError('Illegal argument combination')
-        self._query = query
 
     def __init__(self, *arks, **kwargs):
         pass
