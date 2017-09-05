@@ -144,12 +144,8 @@ class CypherQuery(object):
         """
         f = filename if isinstance(filename, Path) else Path(filename)
         if relative_to is None:
-            try:
-                f = inspect.stack()[depth].filename
-            except AttributeError:
-                # python 2.7
-                f = inspect.stack()[depth][1]
-            relative_to = Path(f).parent
+
+            relative_to = Path(inspect.stack()[depth].filename).parent
         elif not isinstance(relative_to, Path):
             relative_to = Path(relative_to)
         f = relative_to / f
