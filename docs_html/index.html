@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Welcome to OOPyCQL’s documentation! &#8212; OOPyCQL 0.1.0a documentation</title>
+    <title>OOPyCQL &#8212; OOPyCQL 0.1.0a documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -38,11 +38,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-oopycql-s-documentation">
-<h1>Welcome to OOPyCQL’s documentation!<a class="headerlink" href="#welcome-to-oopycql-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="oopycql">
+<h1>OOPyCQL<a class="headerlink" href="#oopycql" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://travis-ci.org/DomWeldon/oopycql"><img alt="https://travis-ci.org/DomWeldon/oopycql.svg?branch=master" src="https://travis-ci.org/DomWeldon/oopycql.svg?branch=master" /></a>
 <a class="reference external image-reference" href="https://coveralls.io/github/DomWeldon/oopycql?branch=master"><img alt="https://coveralls.io/repos/github/DomWeldon/oopycql/badge.svg?branch=master" src="https://coveralls.io/repos/github/DomWeldon/oopycql/badge.svg?branch=master" /></a>
-<p>OOPyCQL provides an object-oriented interface for working with Cypher queries in Python.</p>
+<p>OOPyCQL provides an object-oriented interface for working with Cypher queries in Python. It also sounds a little like the word bicycle.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -51,22 +51,19 @@
 <p>OOPyCQL is a library designed to make the handling of cypher queries easier in python by providing an object interface for a cypher query. But, wait, why?</p>
 <p>I ❤ Cypher and I ❤ Python. But sometimes, this relationship gets a little complicated. Cypher (CQL) is a brilliant language which is expressive, intuitive and feature-rich (especially with libraries like APOC). Often a complex set of database actions can be conducted in a single transaction using just a few lines, saving lots of time and back-and-forth operations in python. In part, CQL is so expressive because it is based on the use of ASCII-art to describe patterns and relationships, making queries simple to understand by simply looking at it. Python, too, is a powerful and expressive language, and and good, ‘pythonic’ code is declarative and straightforward to read. Herein lies the problem: often I want to write a python program that takes a complex cypher query, runs it in my graph, and takes the results and does something with them (for example, in a Flask view). This means that my python program is reliant on a long string of CQL, which I care about and want to be able to edit and tweak, but which is a pain to put in my python script, and can make for some ugly looking code.</p>
 <p>See the examples below.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>q = (‘CREATE (this:Style { name: “Quoted text in Parentheses” })-[:IS]-&gt;’</dt>
-<dd>‘(:Judgement {
-‘  value: “Just plain ugly”’  # look at this ambiguous whitespace :-(
-‘})’)</dd>
-<dt>q = ‘’’  // look at all this whitespace!! and 79 ch limit is pain in the..</dt>
-<dd><dl class="first docutils">
-<dt>CREATE (this:Style { name: “Triple Quotes” })-[:IS]-&gt;(m:Modifier {</dt>
-<dd>value: “less”</dd>
-</dl>
-<p class="last">})-[:THAN]-&gt;(other:Style { name “Quoted text in Parentheses” })
--[:BUT]-&gt;(:Judgement { value: “Still not great” })’‘’</p>
-</dd>
-</dl>
-</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CREATE (this:Style {name: &quot;Quoted text in Parentheses&quot;})-[:IS]-&gt;&#39;</span>
+    <span class="s1">&#39;(:Judgement {value: &quot;Just plain ugly&quot;})&#39;</span><span class="p">)</span>  <span class="c1"># eugh :&#39;-(</span>
+
+
+<span class="n">q</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;// look at all this whitespace!! Plus 79 char limit is pain in the ar</span>
+<span class="s1">    CREATE (this:Style {name: &quot;Triple Quotes&quot;})</span>
+<span class="s1">           -[:IS]-&gt;</span>
+<span class="s1">           (m:Modifier {value: &quot;less&quot;})</span>
+<span class="s1">           -[:THAN]-&gt;</span>
+<span class="s1">           (other:Style { name &quot;Quoted text in Parentheses&quot; })</span>
+<span class="s1">           -[:BUT]-&gt;(:Judgement { value: &quot;Still not great&quot; })&#39;&#39;&#39;</span>
+</pre></div>
+</div>
 <p>Do your eyes hurt yet? These styles are obviously a distraction from writing good cypher: they confuse code lexers and produce weird formatting, make it a pain to spot bugs and syntax errors, and, well, just tire out my fingers sorting out all the whitespace and quotes flying around everywhere. Furthermore, if you’re building queries dynamically and want to use the formatting mini-language, then you get the added bonus of having to escape parentheses (e.g. <code class="docutils literal"><span class="pre">{{</span> <span class="pre">param_name</span> <span class="pre">}}</span></code>) in some queries but not others (to mention just one problem).</p>
 <p>Unfortunately the discipline and formatting required to write good python code (i.e., PEP8), makes it hard to include long and nicely formatted cypher queries directly in your code.</p>
 <p>So just use a file, right? Sure, you could load this from a file using <cite>open()</cite>, but (and here’s where it gets a little subjective), that just <em>feels</em> wrong. You have to decide where to keep the file relative to the code your working on (same directory, different directory, a central “queries” directory?) and figure out how to access it - something that can be a real pain if you’re working in a framework like Flask or Django where <code class="docutils literal"><span class="pre">__file__</span></code> will have a limited relationship to <code class="docutils literal"><span class="pre">os.getcwd()</span></code>. What’s more, you probably don’t want to put all your queries in files (so where do you draw the line), and if you’re building a complex query that depends on a few arguments you need to decide whether to split them, load some parts but not others, etc., etc.</p>
@@ -75,26 +72,130 @@
 </div>
 <div class="section" id="using-cypherquery">
 <h1>Using CypherQuery<a class="headerlink" href="#using-cypherquery" title="Permalink to this headline">¶</a></h1>
+<p>The main feature of the library is <code class="docutils literal"><span class="pre">oopycql.query.CypherQuery</span></code> which can be imported directly from <code class="docutils literal"><span class="pre">oopycql</span></code>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">oopycql</span> <span class="kn">import</span> <span class="n">CypherQuery</span>
+</pre></div>
+</div>
+<p>The default behaviour is to import queries just like one would a normal python class or object (see below), but several other methods are supported, and the class can be subclassed to produce complex dynamic queries.</p>
 <div class="section" id="loading-a-cypher-query-like-an-object">
 <h2>Loading a Cypher Query Like an Object<a class="headerlink" href="#loading-a-cypher-query-like-an-object" title="Permalink to this headline">¶</a></h2>
+<p>Load a query from a file using the same pythonic reference notation you would to load an object.</p>
+<p>For example, let’s imagine you have an application with a directory structure like the below.</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>src/
+├-controllers/
+│ └-login/
+│   ├-cql/
+│   │ ├─find_user_password_combination.cql
+│   │ └─create_login_event.cql
+|   ├─__init__.py
+|   └─views.py
+├─__init__.py
+└─app.py
+</pre></div>
+</div>
+<p>To load a query in <code class="docutils literal"><span class="pre">views.py</span></code>, you could use the below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">oopycql</span> <span class="kn">import</span> <span class="n">CypherQuery</span>
+
+<span class="c1"># relative style import</span>
+<span class="n">cq</span> <span class="o">=</span> <span class="n">CypherQuery</span><span class="p">(</span><span class="s1">&#39;.cql.find_user_password&#39;</span><span class="p">)</span>
+
+<span class="c1"># absolute style import</span>
+<span class="n">cq</span> <span class="o">=</span> <span class="n">CypherQuery</span><span class="p">(</span><span class="s1">&#39;src.controllers.login.cql.create_login_event&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="loading-a-cypher-query-as-a-string">
 <h2>Loading a Cypher Query as a String<a class="headerlink" href="#loading-a-cypher-query-as-a-string" title="Permalink to this headline">¶</a></h2>
+<p>Queries don’t have to be loaded from a file, and can be loaded as a string by specifying <code class="docutils literal"><span class="pre">query</span></code> as a keyword argument to the constructor, or adjusting the <code class="docutils literal"><span class="pre">query</span></code> property of a CypherQuery. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">oopycql</span> <span class="kn">import</span> <span class="n">CypherQuery</span>
+
+<span class="n">count_query</span> <span class="o">=</span> <span class="n">CypherQuery</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s1">&#39;MATCH (n) RETURN COUNT(n)&#39;</span><span class="p">)</span>
+
+<span class="c1"># or alternatively...</span>
+<span class="n">count_query2</span> <span class="o">=</span> <span class="n">CypherQuery</span><span class="p">()</span>
+<span class="n">count_query2</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;MATCH (n) RETURN COUNT(n)&#39;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="subclassing-cypherquery-for-complex-queries">
 <h2>Subclassing <code class="docutils literal"><span class="pre">CypherQuery</span></code> for Complex Queries<a class="headerlink" href="#subclassing-cypherquery-for-complex-queries" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes you’ll want to create compelx queries based on logic to do with outside values. The CypherQuery object can be subclassed to provide a handy base object for just this kind of operation. Simply store the final query value in <code class="docutils literal"><span class="pre">self._query</span></code> to retain parameter functions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">oopycql</span> <span class="kn">import</span> <span class="n">CypherQuery</span>
+
+
+<span class="k">class</span> <span class="nc">MyComplexQuery</span><span class="p">(</span><span class="n">CypherQuery</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="s1">&#39;CREATE (a:Node) SET a += {a_params}&#39;</span>
+
+    <span class="k">def</span> <span class="nf">set_return_node_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call this method to make the query return the ``id`` of</span>
+<span class="sd">        ``a``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">RETURN id(a) AS a_id&#39;</span>
+
+<span class="n">cq</span> <span class="o">=</span> <span class="n">MyComplexQuery</span><span class="p">()</span>
+<span class="n">cq</span><span class="o">.</span><span class="n">set_return_node_id</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="s1">&#39;RETURN id(a) AS a_id&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">cq</span><span class="p">)</span>
+<span class="k">assert</span> <span class="s1">&#39;a_params&#39;</span> <span class="ow">in</span> <span class="n">cq</span><span class="o">.</span><span class="n">params</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>Parameters in the query are identified using a regular expression stored in <code class="docutils literal"><span class="pre">oopycql.cypher.CypherReference.PARAM_FINDING_REGEX</span></code>. You can store values for these parameters to pass when the query is run in the <code class="docutils literal"><span class="pre">CypherQuery.params</span></code> property.</p>
+<p>For example, if you are using the py2neo driver, you can do the following.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># import libs</span>
+<span class="kn">from</span> <span class="nn">oopycql</span> <span class="kn">import</span> <span class="n">CypherQuery</span>
+<span class="kn">from</span> <span class="nn">py2neo</span> <span class="kn">import</span> <span class="n">Graph</span>
+
+<span class="c1"># connect to example graph</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="s1">&#39;bolt://neo4j:neo4j@localhost/db/data&#39;</span><span class="p">)</span>
+
+<span class="c1"># create query from string</span>
+<span class="n">cq</span> <span class="o">=</span> <span class="n">CypherQuery</span><span class="p">(</span><span class="s1">&#39;CREATE (a:Node) SET a += {node_params}&#39;</span><span class="p">)</span>
+
+<span class="c1"># assign a value to the parameter</span>
+<span class="n">cq</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;node_params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;example&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+
+<span class="c1"># run the query</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cq</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">cq</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">CypherQuery</span></code> also supports iteration, designed for use with drivers which support a method like <code class="docutils literal"><span class="pre">run(query,</span> <span class="pre">parameters)</span></code>. This style is supported by py2neo and the default neo4j python driver. This means you can use star unpacking, like the below example with py2neo.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># list(cq) == (cq.query, cq.params)</span>
+<span class="c1"># run the query</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">*</span><span class="n">cq</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="api">
 <h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="oopycql.AbstractCypherQuery">
+<em class="property">class </em><code class="descclassname">oopycql.</code><code class="descname">AbstractCypherQuery</code><a class="reference internal" href="_modules/oopycql/query.html#AbstractCypherQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.AbstractCypherQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class to ensure that future query objects implement the
+rqwuired interface. This way Query objects do not need to inherit
+from CypherQuery</p>
+<dl class="attribute">
+<dt id="oopycql.AbstractCypherQuery.PARAM_FINDING_REGEX">
+<code class="descname">PARAM_FINDING_REGEX</code><em class="property"> = regex.Regex('{ *([^\\p{Sc}\\p{Sm}\\p{So}\\p{Sk}\\p{C}\\p{Z}\\p{P}\\p{M}][^\\p{Sm}\\p{So}\\p{Sk}\\p{C}\\p{Z}\\p{Pd}\\p{Pe}\\p{Pf}\\p{Pi}\\p{Po}\\p{Ps}\\p{M}]*) *}|\\$([^\\p{Sc}\\p{Sm}\\p{So}\\p{Sk}\\p{C}\\p{Z}\\p{P}\\p{M}][^\\p{Sm}\\p{So}\\p{Sk}\\p{C}\\p{Z}\\p{Pd}\\p{Pe}\\p{Pf}\\p{Pi}\\p{Po}\\p{Ps}\\p{M}]*)|{ *`([^\\p{Sc}\\p{Zl}\\p{Zp}}][^\\p{Zl}\\p{Zp}]*)` *}|\\$`([^\\p{Sc}\\p{Zl}\\p{Zp}}][^\\p{Zl}\\p{Zp}]*)`', flags=regex.V0)</em><a class="headerlink" href="#oopycql.AbstractCypherQuery.PARAM_FINDING_REGEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a cypher parameter in a query.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="oopycql.CypherQuery">
 <em class="property">class </em><code class="descclassname">oopycql.</code><code class="descname">CypherQuery</code><span class="sig-paren">(</span><em>*arks</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interface for a cypher query.</p>
 <dl class="classmethod">
 <dt id="oopycql.CypherQuery.from_file">
-<em class="property">classmethod </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>relative_to=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery.from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exactly like <cite>load_from_file</cite>, but cached.</p>
+<em class="property">classmethod </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>relative_to=None</em>, <em>depth=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oopycql/query.html#CypherQuery.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oopycql.CypherQuery.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly like <cite>load_from_file</cite>, but cached using
+<code class="docutils literal"><span class="pre">functools.lru_cache</span></code> (or the python 2 equivalent using
+<code class="docutils literal"><span class="pre">functools32</span></code>) to prevent constantly reading files to load
+the same queries. <code class="docutils literal"><span class="pre">maxsize</span></code> is set at 64.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -166,6 +267,12 @@ needs to be increased.</li>
 <dd><p>A ParameterMap of all the parameters in the query alongside
 their values, if assigned. If no value is assigned to a param
 yet, None is assumed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="oopycql.CypherQuery.query">
+<code class="descname">query</code><a class="headerlink" href="#oopycql.CypherQuery.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string of the query</p>
 </dd></dl>
 
 </dd></dl>

@@ -1,1 +1,1 @@
-from .query import CypherQuery
+from .query import AbstractCypherQuery, CypherQuery

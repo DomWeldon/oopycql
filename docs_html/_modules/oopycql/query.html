@@ -51,6 +51,7 @@
     <span class="c1"># python3</span>
     <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">add_metaclass</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">version_info</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">regex</span>
@@ -59,7 +60,7 @@
 <span class="kn">from</span> <span class="nn">.cypher</span> <span class="k">import</span> <span class="n">CypherReference</span>
 
 
-<span class="k">class</span> <span class="nc">AbstractCypherQuery</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractCypherQuery"><a class="viewcode-back" href="../../index.html#oopycql.AbstractCypherQuery">[docs]</a><span class="k">class</span> <span class="nc">AbstractCypherQuery</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Abstract class to ensure that future query objects implement the</span>
 <span class="sd">    rqwuired interface. This way Query objects do not need to inherit</span>
 <span class="sd">    from CypherQuery</span>
@@ -71,7 +72,7 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractproperty</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span>  <span class="c1"># pragma: no cover</span></div>
 
 
 <div class="viewcode-block" id="CypherQuery"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractCypherQuery</span><span class="p">)</span>
@@ -97,9 +98,14 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">relative_to</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span>  <span class="n">x</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">fqn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.cql&#39;</span><span class="p">),</span>
-                                      <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
-                                      <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">2</span> \
+               <span class="ow">or</span> <span class="p">(</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">version_info</span><span class="o">.</span><span class="n">minor</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">):</span>
+                <span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">depth</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.cql&#39;</span><span class="p">),</span>
+                                 <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
+                                 <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cq</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
             <span class="n">cq</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">query</span>
@@ -133,6 +139,12 @@
         <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
             <span class="k">return</span> <span class="s1">&#39;CypherQuery()&#39;</span>
 
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an iterable of the query and the ParameterMap for use</span>
+<span class="sd">        with some drivers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">))</span>
+
 <div class="viewcode-block" id="CypherQuery.from_module"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.from_module">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.cql&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load a CQL query from the current module. By default, it is</span>
@@ -151,8 +163,12 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">extension</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">2</span> \
+           <span class="ow">or</span> <span class="p">(</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">version_info</span><span class="o">.</span><span class="n">minor</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
@@ -166,11 +182,14 @@
 
 <div class="viewcode-block" id="CypherQuery.from_file"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.from_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Exactly like `load_from_file`, but cached.</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Exactly like `load_from_file`, but cached using</span>
+<span class="sd">        ``functools.lru_cache`` (or the python 2 equivalent using</span>
+<span class="sd">        ``functools32``) to prevent constantly reading files to load</span>
+<span class="sd">        the same queries. ``maxsize`` is set at 64.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
-                                  <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+                                  <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CypherQuery.load_from_file"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.load_from_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -197,7 +216,6 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">relative_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="n">pprint</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
                 <span class="c1"># python 2.7 issue</span>
                 <span class="k">if</span> <span class="s1">&#39;functools&#39;</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
                     <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -224,7 +242,17 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">find_params_in_query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The string of the query&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span>
+
+    <span class="nd">@query</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set value of query directly&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">value</span></div>
 </pre></div>
 
           </div>

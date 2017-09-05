@@ -98,6 +98,12 @@ class CypherQuery(object):
         except (AttributeError, TypeError):
             return 'CypherQuery()'
 
+    def __iter__(self):
+        """Return an iterable of the query and the ParameterMap for use
+        with some drivers.
+        """
+        return iter((str(self), self.params))
+
     @classmethod
     def from_module(cls, f, extension='.cql'):
         """Load a CQL query from the current module. By default, it is
@@ -191,8 +197,24 @@ class CypherQuery(object):
         try:
             return self._params
         except AttributeError:
+            q = self.query
+            if q is None:
+                return ParameterMap()
             self._params = ParameterMap(
-                self.find_params_in_query(self._query)
+                self.find_params_in_query(q)
             )
 
         return self._params
+
+    @property
+    def query(self):
+        """The string of the query"""
+        try:
+            return self._query
+        except AttributeError:
+            return None
+
+    @query.setter
+    def query(self, value):
+        """Set value of query directly"""
+        self._query = value
