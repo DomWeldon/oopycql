@@ -40,6 +40,15 @@
             
   <div class="section" id="cypherquery">
 <h1>CypherQuery<a class="headerlink" href="#cypherquery" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="loading-a-cypher-query-like-an-object">
+<h2>Loading a Cypher Query Like an Object<a class="headerlink" href="#loading-a-cypher-query-like-an-object" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="loading-a-cypher-query-as-a-string">
+<h2>Loading a Cypher Query as a String<a class="headerlink" href="#loading-a-cypher-query-as-a-string" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="subclassing-cypherquery-for-complex-queries">
+<h2>Subclassing <code class="docutils literal"><span class="pre">CypherQuery</span></code> for Complex Queries<a class="headerlink" href="#subclassing-cypherquery-for-complex-queries" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="api">
 <h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -98,6 +107,13 @@ object; if left as None, then will be
 called relative to the file which called
 the function (i.e., previous file in
 the stack)</li>
+<li><strong>depth</strong> – when relative_to is None, the function will
+use inspect.stack() to find the file in which
+the function was called. depth is the integer
+index of the stack where this file is found,
+if this function is called from another function
+(e.g., the cahced method above), then the depth
+needs to be increased.</li>
 </ul>
 </td>
 </tr>
@@ -137,10 +153,6 @@ yet, None is assumed.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">What? Why?</a></li>
-</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>

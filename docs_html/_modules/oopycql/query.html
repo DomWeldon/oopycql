@@ -39,8 +39,7 @@
           <div class="body" role="main">
             
   <h1>Source code for oopycql.query</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractproperty</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractproperty</span><span class="p">,</span> <span class="n">ABCMeta</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">lru_cache</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
@@ -75,7 +74,7 @@
         <span class="k">pass</span>  <span class="c1"># pragma: no cover</span>
 
 
-<div class="viewcode-block" id="CypherQuery"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractCypherQuery</span><span class="p">)</span>
+<div class="viewcode-block" id="CypherQuery"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractCypherQuery</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CypherQuery</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interface for a cypher query.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -101,7 +100,7 @@
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.cql&#39;</span><span class="p">),</span>
                                       <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
                                       <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cq</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
             <span class="n">cq</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">query</span>
             <span class="k">return</span> <span class="n">cq</span>
@@ -110,14 +109,16 @@
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal argument combination&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">query</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the query for use in graph.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -129,10 +130,10 @@
                 <span class="n">dots</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
             <span class="k">return</span> <span class="s1">&#39;CypherQuery(&quot;</span><span class="si">{0}</span><span class="s1">&quot;)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">[:</span><span class="n">end</span><span class="p">]</span> <span class="o">+</span> <span class="n">dots</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
             <span class="k">return</span> <span class="s1">&#39;CypherQuery()&#39;</span>
 
-<div class="viewcode-block" id="CypherQuery.from_module"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery.from_module">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CypherQuery.from_module"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.from_module">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.cql&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load a CQL query from the current module. By default, it is</span>
 <span class="sd">        assumed that there is directory called CQL which contains the</span>
@@ -163,7 +164,7 @@
 
         <span class="k">return</span> <span class="n">ParameterSet</span><span class="p">([</span><span class="n">one_or_other</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">])</span>
 
-<div class="viewcode-block" id="CypherQuery.from_file"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CypherQuery.from_file"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.from_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Exactly like `load_from_file`, but cached.</span>
@@ -171,7 +172,7 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="n">relative_to</span><span class="p">,</span>
                                   <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CypherQuery.load_from_file"><a class="viewcode-back" href="../../query.html#oopycql.CypherQuery.load_from_file">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CypherQuery.load_from_file"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.load_from_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor to load a CypherQuery object from a file.</span>
 
@@ -182,6 +183,13 @@
 <span class="sd">                            called relative to the file which called</span>
 <span class="sd">                            the function (i.e., previous file in</span>
 <span class="sd">                            the stack)</span>
+<span class="sd">        :param depth: when relative_to is None, the function will</span>
+<span class="sd">                      use inspect.stack() to find the file in which</span>
+<span class="sd">                      the function was called. depth is the integer</span>
+<span class="sd">                      index of the stack where this file is found,</span>
+<span class="sd">                      if this function is called from another function</span>
+<span class="sd">                      (e.g., the cahced method above), then the depth</span>
+<span class="sd">                      needs to be increased.</span>
 <span class="sd">        :return: CypherQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -234,11 +242,6 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../intro.html">What? Why?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../query.html">CypherQuery</a></li>
-</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>

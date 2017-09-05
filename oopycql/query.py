@@ -57,9 +57,16 @@ class CypherQuery(object):
             else:
                 relative_to = './'
             filename = reduce(lambda x, y:  x / Path(y), fqn.split('.'))
-            return cls.load_from_file(filename.with_suffix('.cql'),
-                                      relative_to=relative_to,
-                                      depth=2)
+            try:
+                unicode
+            except NameError:
+                depth = 3
+                pass
+            else:
+                depth = 4
+            return cls.from_file(filename.with_suffix('.cql'),
+                                 relative_to=relative_to,
+                                 depth=depth)
         elif len(args) == 0 and query is not None:
             cq = object.__new__(cls)
             cq._query = query
@@ -111,8 +118,16 @@ class CypherQuery(object):
         p = Path(f)
         if extension is not None:
             p = p.with_suffix(extension)
-
-        return cls.load_from_file(p, depth=2)
+        try:
+            unicode
+        except NameError:
+            # python3
+            depth = 3
+            pass
+        else:
+            # python2
+            depth = 4
+        return cls.from_file(p, depth=depth)
 
     @classmethod
     @lru_cache(maxsize=64)
@@ -126,11 +141,14 @@ class CypherQuery(object):
 
     @classmethod
     @lru_cache(maxsize=64)
-    def from_file(cls, filename, relative_to=None):
-        """Exactly like `load_from_file`, but cached.
+    def from_file(cls, filename, relative_to=None, depth=2):
+        """Exactly like `load_from_file`, but cached using
+        ``functools.lru_cache`` (or the python 2 equivalent using
+        ``functools32``) to prevent constantly reading files to load
+        the same queries. ``maxsize`` is set at 64.
         """
         return cls.load_from_file(filename, relative_to=relative_to,
-                                  depth=2)
+                                  depth=depth)
 
     @classmethod
     def load_from_file(cls, filename, relative_to=None, depth=1):
@@ -157,10 +175,10 @@ class CypherQuery(object):
             try:
                 relative_to = Path(inspect.stack()[depth].filename).parent
             except AttributeError:
-                pprint(inspect.stack()[depth+1])
                 # python 2.7 issue
                 if 'functools' in inspect.stack()[depth][1]:
                     depth += 1
+                pprint(inspect.stack()[depth-1:depth+2])
                 relative_to = Path(inspect.stack()[depth][1]).parent
         elif not isinstance(relative_to, Path):
             relative_to = Path(relative_to)

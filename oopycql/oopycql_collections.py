@@ -10,6 +10,8 @@ from .errors import ParameterNotSetError
 
 
 class ParameterMap(UserDict):
+    """A subclass of ``UserDict`` to hold key/value pairs for params
+    in Cypher Queries."""
     def __init__(self, keys=None):
         """Initialize from a ParameterSet to create an empty mapping of
         parameters.
@@ -79,4 +81,5 @@ class ParameterMap(UserDict):
 
 
 class ParameterSet(set):
+    """A subclass of ``set`` to hold parameter keys"""
     pass

@@ -30,10 +30,4 @@ class CypherReference(object):
         '[^\p{Zl}\p{Zp}]*)'
         '`'
         )
-    """Regex to pull out specific """
-
-    CypherClauseType = namedtuple('CypherClauseType', [
-                                                        'keyword',
-                                                        'operation_type',
-                                                        'is_legacy',
-                                                      ])
+    """Regex to pull out params from a query"""
