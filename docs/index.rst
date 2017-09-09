@@ -33,7 +33,7 @@ See the examples below.
 .. code-block:: python
 
   q = ('CREATE (this:Style {name: "Quoted text in Parentheses"})-[:IS]->'
-      '(:Judgement {value: "Just plain ugly"})')  # eugh :'-(
+       '(:Judgement {value: "Just plain ugly"})')  # eugh :'-(
 
 
   q = '''// look at all this whitespace!! Plus 79 char limit is pain in the ar
@@ -42,7 +42,8 @@ See the examples below.
              (m:Modifier {value: "less"})
              -[:THAN]->
              (other:Style { name "Quoted text in Parentheses" })
-             -[:BUT]->(:Judgement { value: "Still not great" })'''
+             -[:BUT]->
+             (j:Judgement { value: "Still not great" })'''
 
 
 Do your eyes hurt yet? These styles are obviously a distraction from writing good cypher: they confuse code lexers and produce weird formatting, make it a pain to spot bugs and syntax errors, and, well, just tire out my fingers sorting out all the whitespace and quotes flying around everywhere. Furthermore, if you're building queries dynamically and want to use the formatting mini-language, then you get the added bonus of having to escape parentheses (e.g. ``{{ param_name }}``) in some queries but not others (to mention just one problem).
