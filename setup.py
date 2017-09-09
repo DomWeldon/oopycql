@@ -65,5 +65,6 @@ setup(
     test_suite='py.test',
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],
-    python_requires='>=2.7'
+    python_requires='>=2.7',
+    download_url='https://github.com/domweldon/oopycql/archive/0.1.0.tar.gz'
 )

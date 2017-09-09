@@ -18,6 +18,8 @@ OOPyCQL provides an object-oriented interface for working with Cypher queries in
    :maxdepth: 2
    :caption: Contents:
 
+   self
+
 
 What? Why?
 ==========
