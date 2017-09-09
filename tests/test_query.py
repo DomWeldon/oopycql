@@ -112,6 +112,13 @@ class CypherQueryInterfaceTestCase(TestCase):
         assert cqi[0] == q
         assert 'np' in cqi[1]
 
+    def test_set_query(self):
+        """Check that query can be set during runtime"""
+        cq = CypherQuery()
+        q = 'MATCH (n) RETURN COUNT(n)'
+        cq.query = q
+        assert cq.query == q
+
 
 class CypherQueryFileConstructorTestCase(TestCase):
     """Check that CypherQuery objects can be loaded from a file.
