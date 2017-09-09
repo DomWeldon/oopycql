@@ -8,6 +8,8 @@
 
 An object-oriented way to manage Cypher queries in python.
 
+[Full Documentation](http://oopycql.rtfd.io)
+
 ## Installation
 
     pip install oopycql
