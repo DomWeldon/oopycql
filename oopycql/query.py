@@ -51,12 +51,25 @@ class CypherQuery(object):
 
         if len(args) == 1 and query is None:
             fqn = args[0]
+            prepend_path = None
+            # for relative imports, the first dot means
+            # dir of calling file (as found by `self.from_file()
+            # when relative_to is None
             if fqn[0] == '.':
                 relative_to = None
                 fqn = fqn[1:]
             else:
                 relative_to = './'
+            # further dots require us to move up a directory
+            while fqn[0] == '.':
+                fqn = fqn[1:]
+                try:
+                    prepend_path /= Path('../')
+                except TypeError:
+                    prepend_path = Path('../')
             filename = reduce(lambda x, y:  x / Path(y), fqn.split('.'))
+            if prepend_path is not None:
+                filename = prepend_path / filename
             if version_info.major == 2 \
                or (version_info.major == 3 and version_info.minor < 5):
                 depth = 4
