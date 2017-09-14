@@ -27,15 +27,15 @@ __author__ = 'Dom Weldon <dom.weldon@gmail.com>'
 __email__ = 'dom.weldon@gmail.com'
 __license__ = 'Apache License, Version 2.0'
 __package__ = 'oopycql'
-__version__ = '0.1.2a2'
+__version__ = '0.1.2a3'
 
 required_deps = [
     'six',
     'regex',
 ] + append_to_deps
 
-download_url = 'https://github.com/domweldon/oopycql/archive/'
-               '{0}.tar.gz'.format(__version__)
+download_url = ('https://github.com/domweldon/oopycql/archive/'
+                '{0}.tar.gz'.format(__version__))
 
 setup(
     name='oopycql',
