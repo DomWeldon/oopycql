@@ -15,7 +15,10 @@ try:
     from functools import lru_cache
     del lru_cache
 except ImportError:
-    append_to_deps.append('functools32')
+    if sys.version_info.major < 3:
+        append_to_deps.append('functools32')
+    else:
+        append_to_deps.append('functools')
 
 if sys.version_info.major < 3 or sys.version_info.minor < 4:
     append_to_deps.append('pathlib')
