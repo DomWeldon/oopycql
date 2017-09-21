@@ -26,7 +26,11 @@ What? Why?
 
 OOPyCQL is a library designed to make the handling of cypher queries easier in python by providing an object interface for a cypher query. But, wait, why?
 
-I ❤ Cypher and I ❤ Python. But sometimes, this relationship gets a little complicated. Cypher (CQL) is a brilliant language which is expressive, intuitive and feature-rich (especially with libraries like APOC). Often a complex set of database actions can be conducted in a single transaction using just a few lines, saving lots of time and back-and-forth operations in python. In part, CQL is so expressive because it is based on the use of ASCII-art to describe patterns and relationships, making queries simple to understand by simply looking at it. Python, too, is a powerful and expressive language, and and good, 'pythonic' code is declarative and straightforward to read. Herein lies the problem: often I want to write a python program that takes a complex cypher query, runs it in my graph, and takes the results and does something with them (for example, in a Flask view). This means that my python program is reliant on a long string of CQL, which I care about and want to be able to edit and tweak, but which is a pain to put in my python script, and can make for some ugly looking code.
+I ❤ Cypher and I ❤ Python. But sometimes, this relationship gets a little complicated. Cypher (CQL) is a brilliant language which is expressive, intuitive and feature-rich (especially with libraries like APOC). Often a complex set of database actions can be conducted in a single transaction using just a few lines, saving lots of time and back-and-forth operations in python.
+
+In part, CQL is so expressive because it is based on the use of ASCII-art to describe patterns and relationships, making queries simple to understand by simply looking at them. Python, too, is a powerful and expressive language, and and good, 'pythonic' code is declarative and straightforward to read.
+
+Herein lies the problem: often I want to write a python program that takes a complex cypher query, runs it in my graph, takes the results and does something with them (for example, a Flask view which takes a product id, looks it up in the graph and then returns the product name). This means that my python program is reliant on a long string of CQL, which I care about and want to be able to edit and tweak, but which is a pain to put in my python script, and can make for some ugly looking code.
 
 See the examples below.
 
@@ -65,7 +69,7 @@ The main feature of the library is ``oopycql.query.CypherQuery`` which can be im
 
   from oopycql import CypherQuery
 
-The default behaviour is to import queries just like one would a normal python class or object (see below), but several other methods are supported, and the class can be subclassed to produce complex dynamic queries.
+The default behaviour is to import queries just like one would a normal python class or object (see below), but several other methods are supported, and the class can be sub-classed to produce complex dynamic queries.
 
 Loading a Cypher Query Like an Object
 -------------------------------------
@@ -120,7 +124,7 @@ Queries don't have to be loaded from a file, and can be loaded as a string by sp
 Subclassing ``CypherQuery`` for Complex Queries
 -----------------------------------------------
 
-Sometimes you'll want to create compelx queries based on logic to do with outside values. The CypherQuery object can be subclassed to provide a handy base object for just this kind of operation. Simply store the final query value in ``self._query`` to retain parameter functions.
+Sometimes you'll want to create complex queries based on logic to do with outside values. The CypherQuery object can be subclassed to provide a handy base object for just this kind of operation. Simply store the final query value in ``self._query`` to retain parameter functions.
 
 .. code-block:: python
 
