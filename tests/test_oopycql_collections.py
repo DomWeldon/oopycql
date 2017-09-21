@@ -22,6 +22,7 @@ class ParameterMapTestCase(TestCase):
         """
         pm = self.get_param_map()
         print(pm, eval(repr(pm)))
+        assert False
         assert eval(repr(pm)) == pm
 
     def test_will_iter_keys(self):
