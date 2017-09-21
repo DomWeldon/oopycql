@@ -68,6 +68,8 @@ class CypherQuery(object):
                 except TypeError:
                     prepend_path = Path('../')
             filename = reduce(lambda x, y:  x / Path(y), fqn.split('.'))
+            if type(filename) == str:
+                filename = Path(filename)
             if prepend_path is not None:
                 filename = prepend_path / filename
             if version_info.major == 2 \

@@ -11,3 +11,7 @@ class RelativeImportTestCase(TestCase):
     def test_relative_import(self):
         cq = CypherQuery('..cql.from_module')
         assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
+
+    def test_relative_import_same_directory(self):
+        cq = CypherQuery('.test_query')
+        assert str(cq) == 'MATCH (n) RETURN COUNT(n)\n'
