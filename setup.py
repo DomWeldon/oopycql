@@ -27,7 +27,7 @@ __author__ = 'Dom Weldon <dom.weldon@gmail.com>'
 __email__ = 'dom.weldon@gmail.com'
 __license__ = 'Apache License, Version 2.0'
 __package__ = 'oopycql'
-__version__ = '1.1.3a1'
+__version__ = '1.1.4a0'
 
 required_deps = [
     'six',
