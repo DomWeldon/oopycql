@@ -2,7 +2,7 @@
 OOPyCQL
 -------------
 
-An object oritneted interface for the Cypher Query Language in Python.
+An object oriented interface for the CypherQueries in Python.
 """
 import sys
 try:
@@ -27,7 +27,7 @@ __author__ = 'Dom Weldon <dom.weldon@gmail.com>'
 __email__ = 'dom.weldon@gmail.com'
 __license__ = 'Apache License, Version 2.0'
 __package__ = 'oopycql'
-__version__ = '1.1.4a0'
+__version__ = '1.1.4a1'
 
 required_deps = [
     'six',
