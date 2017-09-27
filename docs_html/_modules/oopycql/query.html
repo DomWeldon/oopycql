@@ -109,6 +109,8 @@
                 <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                     <span class="n">prepend_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span>  <span class="n">x</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">fqn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">prepend_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="n">prepend_path</span> <span class="o">/</span> <span class="n">filename</span>
             <span class="k">if</span> <span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">2</span> \
@@ -160,16 +162,12 @@
 
 <div class="viewcode-block" id="CypherQuery.from_module"><a class="viewcode-back" href="../../index.html#oopycql.CypherQuery.from_module">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.cql&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Load a CQL query from the current module. By default, it is</span>
-<span class="sd">        assumed that there is directory called CQL which contains the</span>
-<span class="sd">        queries.</span>
+        <span class="sd">&quot;&quot;&quot;Load a CQL query from the current module.</span>
 
 <span class="sd">        :param f: filename of the query</span>
-<span class="sd">        :param submodule: the directory name to load from, cql by</span>
-<span class="sd">                          default, if None then will use current module</span>
-<span class="sd">                          directory.</span>
 <span class="sd">        :param extension: the file extension (inc dot) of the query, if</span>
-<span class="sd">                          None then will assume no extension</span>
+<span class="sd">                          None then will assume no extension. Default</span>
+<span class="sd">                          is ``.cql``</span>
 <span class="sd">        :rtype: CypherQuery</span>
 <span class="sd">        :return: CypherQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>

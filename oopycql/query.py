@@ -121,16 +121,12 @@ class CypherQuery(object):
 
     @classmethod
     def from_module(cls, f, extension='.cql'):
-        """Load a CQL query from the current module. By default, it is
-        assumed that there is directory called CQL which contains the
-        queries.
+        """Load a CQL query from the current module.
 
         :param f: filename of the query
-        :param submodule: the directory name to load from, cql by
-                          default, if None then will use current module
-                          directory.
         :param extension: the file extension (inc dot) of the query, if
-                          None then will assume no extension
+                          None then will assume no extension. Default
+                          is ``.cql``
         :rtype: CypherQuery
         :return: CypherQuery
         """
