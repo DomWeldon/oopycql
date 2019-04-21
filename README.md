@@ -1,5 +1,6 @@
 
-[![Build Status](https://travis-ci.org/DomWeldon/oopycql.svg?branch=master)](https://travis-ci.org/DomWeldon/oopycql) [![Coverage Status](https://coveralls.io/repos/github/DomWeldon/oopycql/badge.svg?branch=master)](https://coveralls.io/github/DomWeldon/oopycql?branch=master) [![Docs Status](https://readthedocs.org/projects/oopycql/badge/?version=latest)](http://oopycql.rtfd.io)
+[![Build Status](https://travis-ci.org/DomWeldon/oopycql.svg?branch=master)](https://travis-ci.org/DomWeldon/oopycql) [![Coverage Status](https://coveralls.io/repos/github/DomWeldon/oopycql/badge.svg?branch=master)](https://coveralls.io/github/DomWeldon/oopycql?branch=master) [![Docs Status](https://readthedocs.org/projects/oopycql/badge/?version=latest)](http://oopycql.rtfd.io) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 
 
 

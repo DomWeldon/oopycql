@@ -1,9 +1,11 @@
 from abc import abstractproperty, ABCMeta
+
 try:
     from functools import lru_cache
 except ImportError:  # pragma: no cover
     from functools32 import lru_cache  # pragma: no cover
 import inspect
+
 try:
     reduce
 except NameError:
@@ -38,6 +40,7 @@ class AbstractCypherQuery(ABCMeta):
 class CypherQuery(object):
     """Interface for a cypher query.
     """
+
     def __new__(cls, *args, **kwargs):
         """Constructor, optionally passing query as a string.
 
@@ -45,7 +48,7 @@ class CypherQuery(object):
         :param fqn: Fully Qualified Name to import the query as
         """
         try:
-            query = kwargs['query']
+            query = kwargs["query"]
         except KeyError:
             query = None
 
@@ -55,31 +58,34 @@ class CypherQuery(object):
             # for relative imports, the first dot means
             # dir of calling file (as found by `self.from_file()
             # when relative_to is None
-            if fqn[0] == '.':
+            if fqn[0] == ".":
                 relative_to = None
                 fqn = fqn[1:]
             else:
-                relative_to = './'
+                relative_to = "./"
             # further dots require us to move up a directory
-            while fqn[0] == '.':
+            while fqn[0] == ".":
                 fqn = fqn[1:]
                 try:
-                    prepend_path /= Path('../')
+                    prepend_path /= Path("../")
                 except TypeError:
-                    prepend_path = Path('../')
-            filename = reduce(lambda x, y:  x / Path(y), fqn.split('.'))
+                    prepend_path = Path("../")
+            filename = reduce(lambda x, y: x / Path(y), fqn.split("."))
             if type(filename) == str:
                 filename = Path(filename)
             if prepend_path is not None:
                 filename = prepend_path / filename
-            if version_info.major == 2 \
-               or (version_info.major == 3 and version_info.minor < 5):
+            if version_info.major == 2 or (
+                version_info.major == 3 and version_info.minor < 5
+            ):
                 depth = 4
             else:
                 depth = 3
-            return cls.from_file(filename.with_suffix('.cql'),
-                                 relative_to=relative_to,
-                                 depth=depth)
+            return cls.from_file(
+                filename.with_suffix(".cql"),
+                relative_to=relative_to,
+                depth=depth,
+            )
         elif len(args) == 0 and query is not None:
             cq = object.__new__(cls)
             cq._query = query
@@ -88,7 +94,7 @@ class CypherQuery(object):
         elif len(args) == 0 and query is None:
             return object.__new__(cls)
 
-        raise ValueError('Illegal argument combination')
+        raise ValueError("Illegal argument combination")
 
     def __init__(self, *arks, **kwargs):
         pass
@@ -104,14 +110,14 @@ class CypherQuery(object):
         try:
             if len(self._query) >= 40:
                 end = 37
-                dots = '...'
+                dots = "..."
             else:
                 end = 40
-                dots = ''
+                dots = ""
 
             return 'CypherQuery("{0}")'.format(self._query[:end] + dots)
         except (AttributeError, TypeError):
-            return 'CypherQuery()'
+            return "CypherQuery()"
 
     def __iter__(self):
         """Return an iterable of the query and the ParameterMap for use
@@ -120,7 +126,7 @@ class CypherQuery(object):
         return iter((str(self), self.params))
 
     @classmethod
-    def from_module(cls, f, extension='.cql'):
+    def from_module(cls, f, extension=".cql"):
         """Load a CQL query from the current module.
 
         :param f: filename of the query
@@ -133,8 +139,9 @@ class CypherQuery(object):
         p = Path(f)
         if extension is not None:
             p = p.with_suffix(extension)
-        if version_info.major == 2 \
-           or (version_info.major == 3 and version_info.minor < 5):
+        if version_info.major == 2 or (
+            version_info.major == 3 and version_info.minor < 5
+        ):
             depth = 4
         else:
             depth = 3
@@ -158,8 +165,9 @@ class CypherQuery(object):
         ``functools32``) to prevent constantly reading files to load
         the same queries. ``maxsize`` is set at 64.
         """
-        return cls.load_from_file(filename, relative_to=relative_to,
-                                  depth=depth)
+        return cls.load_from_file(
+            filename, relative_to=relative_to, depth=depth
+        )
 
     @classmethod
     def load_from_file(cls, filename, relative_to=None, depth=1):
@@ -187,13 +195,13 @@ class CypherQuery(object):
                 relative_to = Path(inspect.stack()[depth].filename).parent
             except AttributeError:
                 # python 2.7 issue
-                if 'functools' in inspect.stack()[depth][1]:
+                if "functools" in inspect.stack()[depth][1]:
                     depth += 1
                 relative_to = Path(inspect.stack()[depth][1]).parent
         elif not isinstance(relative_to, Path):
             relative_to = Path(relative_to)
         f = relative_to / f
-        with f.open('r') as _:
+        with f.open("r") as _:
             q = _.read()
         cq = object.__new__(cls)
         cq._query = q
@@ -211,9 +219,7 @@ class CypherQuery(object):
             q = self.query
             if q is None:
                 return ParameterMap()
-            self._params = ParameterMap(
-                self.find_params_in_query(q)
-            )
+            self._params = ParameterMap(self.find_params_in_query(q))
 
         return self._params
 

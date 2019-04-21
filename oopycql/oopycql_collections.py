@@ -6,12 +6,14 @@ except ImportError:
         def __init__(self):  # pragma: no cover
             self.data = {}  # pragma: no cover
 
+
 from .errors import ParameterNotSetError
 
 
 class ParameterMap(UserDict):
     """A subclass of ``UserDict`` to hold key/value pairs for params
     in Cypher Queries."""
+
     def __init__(self, keys=None):
         """Initialize from a ParameterSet to create an empty mapping of
         parameters.
@@ -31,20 +33,21 @@ class ParameterMap(UserDict):
         return self.items()
 
     def __repr__(self):
-        return 'ParameterMap({0})'.format(repr({
-            k:self[k]
-            for k in self.keys()
-        }))
+        return "ParameterMap({0})".format(
+            repr({k: self[k] for k in self.keys()})
+        )
 
     def __str__(self):
         return repr(self)
 
     def __setitem__(self, k, v):
         if k not in self.keys():
-            raise ParameterNotSetError((
-                'Parameters can only be set if they are already specified '
-                'in the cypher query.'
-            ))
+            raise ParameterNotSetError(
+                (
+                    "Parameters can only be set if they are already specified "
+                    "in the cypher query."
+                )
+            )
         self.data[k] = v
 
     def __getitem__(self, k):
@@ -54,9 +57,9 @@ class ParameterMap(UserDict):
             if k in self.keys():
                 return None
 
-        raise ParameterNotSetError((
-            'The parameter you specified was not found in your query.'
-        ))
+        raise ParameterNotSetError(
+            ("The parameter you specified was not found in your query.")
+        )
 
     def __iter__(self):
         return iter(self.keys())
@@ -74,7 +77,7 @@ class ParameterMap(UserDict):
         return True
 
     def __ne__(self, other):
-        return not(self.__eq__(other))
+        return not (self.__eq__(other))
 
     def __bool__(self):
         return len(self) > 0
@@ -85,4 +88,5 @@ class ParameterMap(UserDict):
 
 class ParameterSet(set):
     """A subclass of ``set`` to hold parameter keys"""
+
     pass
