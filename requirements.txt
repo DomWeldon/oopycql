@@ -1,6 +1,5 @@
-pytest
+pytest>=4.4
 flake8
 regex
 coverage>=4.4
-pytest-cov
-sphinx
+pytest-cov>=2.6.1
